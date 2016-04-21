@@ -3,7 +3,17 @@
 #####################
 
 2 Player real time tic tac toe game.  Very simple game where two people go
-head to head at the classic game of tic tac toe.
+head to head at the classic game of tic tac toe.  Use a finite state machine
+on the server side to send messages to the client.
+
+Future possibilites:  
+I plan to add a frontend framework (Angular probably) to replace the jquery I 
+have for the frontend. First time using socketio so didn't want to complicate
+and the problem.
+
+Add a redis database to persist the game boards.  Which will also allow for the
+possibilites of matches.
+
 
 Tic Tac Toe
 Core
