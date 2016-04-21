@@ -1,9 +1,8 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var Set = require("collections/set");
-var List = require("collections/list");
 
+//// EXPRESS ROUTES ////
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
 });
@@ -14,6 +13,7 @@ app.get('/client.js', function(req, res){
 	res.sendFile(__dirname + '/client.js');
 });
 
+//// UTILITIES ////
 Array.prototype.remove = function(elem) {
 	var index = this.indexOf(elem);
 	if (index > -1) {
@@ -24,6 +24,7 @@ Array.prototype.remove = function(elem) {
 };
 
 
+///// TIC TAC TOE GAME CLIENT ////
 var currentState = 'waiting';
 
 var board = [
@@ -120,8 +121,8 @@ io.on('connection', function(socket){
 	// game and restart state
 	if (currentState === 'inGame') {
 		if (users.length > 2) {
-			endCurrentGame();
 			socket.broadcast.emit('status update', 'interrupted');
+			endCurrentGame();
 		}
 	}
 	console.log('users ->', users);

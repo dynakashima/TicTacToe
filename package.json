@@ -1,11 +1,9 @@
 {
-  "name": "socket-chat-example",
+  "name": "tic-tac-toe",
   "version": "0.0.1",
-  "description": "my first socket.io app",
+  "description": "real time 2 player tic-tac-toe game",
   "dependencies": {
-    "collections": "^3.0.0",
     "express": "4.10.2",
-    "mongoose": "^4.4.12",
     "socket.io": "1.2.0"
   }
 }

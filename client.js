@@ -1,5 +1,5 @@
       var socket = io();
-      var status = 'waiting';
+      var currentState = 'waiting';
       var lastPlayed = '';
       var letter = '';
 
@@ -15,14 +15,10 @@
         };
       }
 
-      function wipeBoard() {
-        for (var i = 0; i < 3; i++) {
-          var htmlTag = '#row' + i;
-          for (var j = 0; j < 3; j++) {
-            var newTag = htmlTag + ' .col' + j;
-            $(newTag).html('');
-          };
-        };
+      function flashError($errorBox) {
+        $errorBox.fadeIn(600, function() {
+          $errorBox.fadeOut(600);
+        });
       }
 
       function stateMux(state) {
@@ -30,7 +26,6 @@
           $('h1').hide();
           $('#waiting').show();
           $('#main').hide();
-          wipeBoard();
         }
         else if (state === 'inGame') {
           $('h1').hide();
@@ -40,61 +35,45 @@
         else if (state === 'win') {
           $('#main').hide();
           $('#win').show();
-          wipeBoard();
-          socket.removeListener('status update');
-          socket.removeListener('board changed');
         }
         else if (state === 'loss') {
           $('#main').hide();
           $('#lost').show();
-          wipeBoard();
-          socket.removeListener('status update');
-          socket.removeListener('board changed');
         }
         else if (state === 'tie') {
           $('#main').hide();
           $('#tie').show();
-          wipeBoard();
-          socket.removeListener('status update');
-          socket.removeListener('board changed');
         }
         else if (state === 'interrupted') {
           $('#main').hide();
           $('#interrupted').show();
-          wipeBoard();
-          socket.removeListener('status update');
-          socket.removeListener('board changed');
         }
       }
-      function flashError() {
-        $("#not-turn").fadeIn(600, function() {
-          $("#not-turn").fadeOut(600);
-        });
-      }
+
+      // bind refresh button to refresh
+      $('button').click(function() {location.reload(true);});
+
+      // if it is correct turn, send out move and wait for
+      // state change
       $('.col').click(function() {
-        console.log('lastPlayed', lastPlayed);
-        console.log('letter', letter);
         if (lastPlayed !== letter) {
           var data = $(this).data();
           data.letter = letter;
           socket.emit('player moved', data);
         }
         else {
-          flashError();
+          flashError($("#not-turn"));
         }
       });
 
       socket.on('status update', function(stats) {
-        status = stats;
-        console.log(status);
-        stateMux(status);
+        currentState = stats;
+        stateMux(currentState);
       });
 
       socket.on('setletter', function(let) { letter = let; });
 
       socket.on('board changed', function(data) {
         addBoardToHtml(data.board);
-        
         lastPlayed = data.player;
       });
-      socket.on('wipeBoard', wipeBoard);
