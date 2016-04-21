@@ -2,36 +2,7 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee;}
-
-      #main {
-        width: 180px;
-        background-color: yellow;
-      }
-      #row0, #row1, #row2 {
-        height: 50px;
-        display: flex;
-      }
-      #row0, #row1 {
-        border-bottom: solid;
-      }
-      .col {
-        height: 100%;
-        flex: 1;
-        border-left: solid;
-        font-size: 2.6em;
-        text-align: center;
-      }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="./tictac.css"/>
   </head>
   <body>
     <div id="main">
@@ -53,74 +24,17 @@
     </div>
 
     <h1 id="waiting">Waiting for other player</h1>
-    <ul id="messages"></ul>
-    
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+    <h1 id="tie">Draw</h1>
+    <h1 id="lost">Defeat</h1>
+    <h1 id="win">Victory</h1>
+    <h1 id="interrupted">Game Interrupted</h1>
+    <h2 id="not-turn" style="display:none">Not your turn</h2>
+
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    
+    <script type="text/javascript" src="./client.js"></script>
     <script type="text/javascript">
-      var socket = io();
-      var status = 'waiting';
 
-      function addBoardToHtml(b) {
-        console.log('akldfjalksjdf')
-        for (var i = 0; i < b.length; i++) {
-          var row = b[i];
-          var htmlTag = '#row' + i;
-          for (var j = 0; j < row.length; j++) {
-            var letter = row[j];
-            var newTag = ' [data-x="' + j + '"]';
-            $(htmlTag + ' ' + newTag).html(letter);
-          };
-        };
-      }
-      function wipeBoard() {
-        for (var i = 0; i < 3; i++) {
-          var htmlTag = '#row' + i;
-          for (var j = 0; j < 3; j++) {
-            var newTag = htmlTag + ' .col' + j;
-            $(newTag).html('');
-          };
-        };
-      }
-      function stateMux(state) {
-        if (state === 'waiting') {
-          $('#waiting').show();
-          $('#main').hide();
-        }
-        else if (state === 'inGame') {
-          $('#waiting').hide();
-          $('#main').show(); 
-        }
-      }
-
-      $('form').submit(function(){        
-        var msg = $('#m').val();
-        socket.emit('chat message', msg);
-        return false;
-      });
-
-      $('.col').click(function() {
-        var data = $(this).data();
-        socket.emit('player moved', data);
-      });
-
-      socket.on('status update', function(stats) {
-        console.log(stats);
-        status = stats;
-      });
-
-      socket.on('board changed', function(board) {
-        addBoardToHtml(board);
-        console.log(board);
-      })
-
-      socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
-      });
     </script>
   </body>
 </html>
